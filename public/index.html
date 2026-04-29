@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book a Call · SUPSI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ── RESET & BASE ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0a2540;
+      --navy-mid: #143a5c;
+      --ocean: #1a6ea8;
+      --sky: #e8f4fd;
+      --gold: #c8a96e;
+      --gold-light: #f0e4c8;
+      --sand: #faf8f4;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --border: #d4dde8;
+      --white: #ffffff;
+      --radius: 6px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--sand);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO HEADER ── */
+    header {
+      background: var(--navy);
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+      padding: 64px 24px 56px;
+      text-align: center;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 120%, rgba(26,110,168,0.35) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 80% at -10% 50%, rgba(200,169,110,0.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Animated wave lines */
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { opacity: 0.4; transform: scaleX(0.8); }
+      50% { opacity: 1; transform: scaleX(1); }
+    }
+
+    .header-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-mark svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--gold);
+    }
+
+    .logo-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    .lang-toggle {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .lang-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.6);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--navy);
+      font-weight: 500;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 6vw, 46px);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .subtitle {
+      font-size: 15px;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.7);
+      max-width: 520px;
+      margin: 0 auto;
+      font-weight: 300;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(200,169,110,0.15);
+      border: 1px solid rgba(200,169,110,0.3);
+      color: var(--gold-light);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    /* ── MAIN CONTENT ── */
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    /* ── STEPS ── */
+    .step {
+      display: none;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .step.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--ocean);
+      margin-bottom: 20px;
+    }
+
+    /* ── DATE TABS ── */
+    .date-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 28px;
+      scrollbar-width: none;
+    }
+
+    .date-tabs::-webkit-scrollbar { display: none; }
+
+    .date-tab {
+      flex-shrink: 0;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .date-tab:hover {
+      border-color: var(--ocean);
+      background: var(--sky);
+    }
+
+    .date-tab.active {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: var(--white);
+    }
+
+    .date-tab.active .date-day { color: var(--gold); }
+
+    .date-day {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      display: block;
+      line-height: 1;
+    }
+
+    .date-month {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 3px;
+      display: block;
+    }
+
+    .date-tab.active .date-month { color: rgba(255,255,255,0.6); }
+
+    /* ── TIME SLOTS ── */
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+    }
+
+    .slot-btn {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 10px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      text-align: center;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slot-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--ocean);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .slot-btn:hover {
+      border-color: var(--ocean);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(26,110,168,0.15);
+    }
+
+    .slot-btn.selected {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: var(--white);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(10,37,64,0.25);
+    }
+
+    .slot-btn.selected .slot-range { color: rgba(255,255,255,0.6); }
+
+    .slot-time { font-size: 17px; font-weight: 600; display: block; }
+    .slot-range { font-size: 11px; color: var(--muted); margin-top: 2px; display: block; }
+
+    .no-slots {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 0;
+      font-size: 15px;
+    }
+
+    /* ── CTA BUTTON ── */
+    .cta-bar {
+      margin-top: 32px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--navy);
+      border: none;
+      border-radius: var(--radius);
+      padding: 15px 36px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      background: #b8953e;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(200,169,110,0.35);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: 13px 24px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-right: auto;
+    }
+
+    .btn-ghost:hover { border-color: var(--navy); }
+
+    /* ── FORM ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+    }
+
+    .selected-summary {
+      background: var(--sky);
+      border: 1px solid rgba(26,110,168,0.2);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .summary-icon {
+      width: 40px; height: 40px;
+      background: var(--navy);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+    }
+
+    .summary-date { font-weight: 500; font-size: 15px; }
+    .summary-time { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+    .form-group { margin-bottom: 20px; }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 13px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--ocean);
+      box-shadow: 0 0 0 3px rgba(26,110,168,0.1);
+    }
+
+    input::placeholder { color: #aab4c0; }
+
+    /* ── SUCCESS ── */
+    .success-wrap {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .success-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--navy), var(--ocean));
+      border-radius: 50%;
+      margin: 0 auto 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.5); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .success-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+
+    .success-msg {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .success-detail {
+      background: var(--sky);
+      border: 1px solid rgba(26,110,168,0.15);
+      border-radius: 10px;
+      padding: 20px 24px;
+      text-align: left;
+      margin-bottom: 28px;
+      display: inline-block;
+      min-width: 280px;
+    }
+
+    .success-detail p {
+      font-size: 14px;
+      margin: 5px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-ics {
+      background: transparent;
+      border: 1.5px solid var(--navy);
+      color: var(--navy);
+      border-radius: var(--radius);
+      padding: 13px 28px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn-ics:hover {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    /* ── LOADING / ERROR ── */
+    .loading-spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(10,37,64,0.2);
+      border-top-color: var(--navy);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      background: #fff1f1;
+      border: 1px solid #ffcdd2;
+      color: #b71c1c;
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-size: 13px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .error-msg.show { display: block; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #a0adb8;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .card { padding: 24px 20px; }
+      .slots-grid { grid-template-columns: repeat(3, 1fr); }
+      .cta-bar { flex-direction: column; gap: 10px; }
+      .btn-ghost { order: 2; text-align: center; }
+      .btn-primary { order: 1; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('it')">IT</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+  </div>
+
+  <div class="header-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>
+    </div>
+    <span class="logo-text">SUPSI</span>
+  </div>
+
+  <div class="badge">
+    <span class="badge-dot"></span>
+    <span data-it="Disponibile ora" data-en="Available now">Disponibile ora</span>
+  </div>
+
+  <h1 data-it="Prenota una <em>videochiamata</em> introduttiva" data-en="Book an <em>introductory</em> video call">
+    Prenota una <em>videochiamata</em> introduttiva
+  </h1>
+  <p class="subtitle" data-it="Prenota una breve call conoscitiva in vista della nuova campagna promozionale SUPSI. Sarà l'occasione per conoscerci meglio e rispondere a tutte le tue domande." data-en="Schedule a short introductory call ahead of the new SUPSI promotional campaign. It's a great opportunity to get to know each other and ask any questions you may have.">
+    Prenota una breve call conoscitiva in vista della nuova campagna promozionale SUPSI.
+    Sarà l'occasione per conoscerci meglio e rispondere a tutte le tue domande.
+  </p>
+</header>
+
+<main>
+
+  <!-- STEP 1: Choose slot -->
+  <div class="step active" id="step1">
+    <p class="section-label" data-it="1 / Scegli il giorno e l'orario" data-en="1 / Choose day & time">1 / Scegli il giorno e l'orario</p>
+
+    <div class="date-tabs" id="dateTabs">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="slots-grid" id="slotsGrid">
+      <p class="no-slots" data-it="Caricamento..." data-en="Loading...">Caricamento...</p>
+    </div>
+
+    <div class="cta-bar">
+      <button class="btn-primary" id="btnNext1" onclick="goStep(2)" disabled>
+        <span data-it="Continua" data-en="Continue">Continua</span>
+        <span>→</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2: User info -->
+  <div class="step" id="step2">
+    <p class="section-label" data-it="2 / I tuoi dati" data-en="2 / Your details">2 / I tuoi dati</p>
+
+    <div class="card">
+      <div class="selected-summary" id="selectedSummary">
+        <div class="summary-icon">📅</div>
+        <div>
+          <div class="summary-date" id="summaryDate"></div>
+          <div class="summary-time" id="summaryTime"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label data-it="Nome completo" data-en="Full name">Nome completo</label>
+        <input type="text" id="inputName" placeholder="es. Mario Rossi" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label data-it="Indirizzo email" data-en="Email address">Indirizzo email</label>
+        <input type="email" id="inputEmail" placeholder="mario@example.com" autocomplete="email">
+      </div>
+
+      <div class="error-msg" id="formError"></div>
+    </div>
+
+    <div class="cta-bar">
+      <button class="btn-ghost" onclick="goStep(1)" data-it="← Indietro" data-en="← Back">← Indietro</button>
+      <button class="btn-primary" id="btnConfirm" onclick="submitBooking()">
+        <span data-it="Prenota la tua call" data-en="Book your call">Prenota la tua call</span>
+        <span>🎥</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Success -->
+  <div class="step" id="step3">
+    <div class="success-wrap">
+      <div class="success-icon">✅</div>
+      <h2 class="success-title" data-it="Perfetto, ci siamo!" data-en="All set!">Perfetto, ci siamo!</h2>
+      <p class="success-msg" data-it="La tua call è stata prenotata con successo. Controlla la tua email per i dettagli e il link Teams." data-en="Your call has been successfully booked. Please check your email for details and the Teams link.">
+        La tua call è stata prenotata con successo. Controlla la tua email per i dettagli e il link Teams.
+      </p>
+
+      <div class="success-detail" id="successDetail">
+        <p>📅 <strong id="successDate"></strong></p>
+        <p>🕐 <strong id="successTime"></strong></p>
+        <p>📧 <span id="successEmail"></span></p>
+      </div>
+      <br>
+      <button class="btn-ics" onclick="downloadICS()" data-it="📆 Aggiungi al calendario (.ics)" data-en="📆 Add to calendar (.ics)">
+        📆 Aggiungi al calendario (.ics)
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  © 2026 SUPSI · <span data-it="Tutti i diritti riservati" data-en="All rights reserved">Tutti i diritti riservati</span>
+</footer>
+
+<script>
+  // ─── STATE ────────────────────────────────────────────────────────────────
+  let lang = 'it';
+  let slots = [];
+  let groupedByDate = {};
+  let selectedDate = null;
+  let selectedSlot = null;
+  let bookingResult = null;
+
+  // ─── I18N ─────────────────────────────────────────────────────────────────
+  function setLang(l) {
+    lang = l;
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.textContent === l.toUpperCase());
+    });
+    document.querySelectorAll('[data-it]').forEach(el => {
+      const txt = el.getAttribute(`data-${l}`);
+      if (txt) el.innerHTML = txt;
+    });
+  }
+
+  // ─── FETCH SLOTS ──────────────────────────────────────────────────────────
+  async function loadSlots() {
+    try {
+      const res = await fetch('/api/slots');
+      slots = await res.json();
+      groupByDate();
+      renderDateTabs();
+    } catch (e) {
+      document.getElementById('slotsGrid').innerHTML =
+        `<p class="no-slots">⚠️ Errore di connessione. Riprova.</p>`;
+    }
+  }
+
+  function groupByDate() {
+    groupedByDate = {};
+    slots.forEach(s => {
+      if (!groupedByDate[s.date]) groupedByDate[s.date] = [];
+      groupedByDate[s.date].push(s);
+    });
+  }
+
+  // ─── DATE TABS ────────────────────────────────────────────────────────────
+  function renderDateTabs() {
+    const dates = Object.keys(groupedByDate).sort();
+    if (!dates.length) {
+      document.getElementById('dateTabs').innerHTML = '';
+      document.getElementById('slotsGrid').innerHTML =
+        `<p class="no-slots">Nessuno slot disponibile / No slots available.</p>`;
+      return;
+    }
+
+    const tabs = document.getElementById('dateTabs');
+    tabs.innerHTML = '';
+
+    dates.forEach((d, i) => {
+      const dt = new Date(d + 'T12:00:00');
+      const day = dt.toLocaleDateString('it-IT', { day: 'numeric' });
+      const month = dt.toLocaleDateString('it-IT', { month: 'short' });
+      const weekday = dt.toLocaleDateString('it-IT', { weekday: 'short' });
+
+      const btn = document.createElement('button');
+      btn.className = 'date-tab' + (i === 0 ? ' active' : '');
+      btn.innerHTML = `
+        <span class="date-day">${day}</span>
+        <span class="date-month">${weekday} ${month}</span>
+      `;
+      btn.onclick = () => selectDate(d);
+      tabs.appendChild(btn);
+    });
+
+    selectDate(dates[0]);
+  }
+
+  function selectDate(date) {
+    selectedDate = date;
+    document.querySelectorAll('.date-tab').forEach((btn, i) => {
+      const dates = Object.keys(groupedByDate).sort();
+      btn.classList.toggle('active', dates[i] === date);
+    });
+    renderSlots();
+  }
+
+  // ─── SLOTS ────────────────────────────────────────────────────────────────
+  function renderSlots() {
+    const grid = document.getElementById('slotsGrid');
+    const daySlots = (groupedByDate[selectedDate] || []).sort((a, b) =>
+      a.start.localeCompare(b.start)
+    );
+
+    if (!daySlots.length) {
+      grid.innerHTML = `<p class="no-slots">Nessuno slot disponibile per questo giorno.</p>`;
+      return;
+    }
+
+    grid.innerHTML = '';
+    daySlots.forEach(slot => {
+      const btn = document.createElement('button');
+      btn.className = 'slot-btn' + (selectedSlot?.id === slot.id ? ' selected' : '');
+      btn.innerHTML = `
+        <span class="slot-time">${slot.start}</span>
+        <span class="slot-range">${slot.start}–${slot.end}</span>
+      `;
+      btn.onclick = () => selectSlot(slot, btn);
+      grid.appendChild(btn);
+    });
+  }
+
+  function selectSlot(slot, btn) {
+    selectedSlot = slot;
+    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    document.getElementById('btnNext1').disabled = false;
+  }
+
+  // ─── NAVIGATION ───────────────────────────────────────────────────────────
+  function goStep(n) {
+    if (n === 2 && !selectedSlot) return;
+    document.querySelectorAll('.step').forEach((s, i) => {
+      s.classList.toggle('active', i + 1 === n);
+    });
+
+    if (n === 2) {
+      const dt = new Date(selectedSlot.date + 'T12:00:00');
+      const dateStr = dt.toLocaleDateString(lang === 'it' ? 'it-IT' : 'en-GB', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+      });
+      document.getElementById('summaryDate').textContent = dateStr;
+      document.getElementById('summaryTime').textContent =
+        `${selectedSlot.start} – ${selectedSlot.end} (CET) · 15 min`;
+    }
+  }
+
+  // ─── BOOKING ──────────────────────────────────────────────────────────────
+  async function submitBooking() {
+    const name = document.getElementById('inputName').value.trim();
+    const email = document.getElementById('inputEmail').value.trim();
+    const errEl = document.getElementById('formError');
+
+    if (!name || !email) {
+      showError(lang === 'it' ? 'Compila tutti i campi.' : 'Please fill in all fields.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError(lang === 'it' ? 'Email non valida.' : 'Invalid email address.');
+      return;
+    }
+
+    errEl.classList.remove('show');
+    const btn = document.getElementById('btnConfirm');
+    btn.disabled = true;
+    btn.innerHTML = `<span class="loading-spinner"></span>`;
+
+    try {
+      const res = await fetch('/api/book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slotId: selectedSlot.id, name, email }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Booking failed');
+      }
+
+      bookingResult = data;
+
+      // Populate success screen
+      const dt = new Date(selectedSlot.date + 'T12:00:00');
+      document.getElementById('successDate').textContent =
+        dt.toLocaleDateString(lang === 'it' ? 'it-IT' : 'en-GB', {
+          weekday: 'long', day: 'numeric', month: 'long'
+        });
+      document.getElementById('successTime').textContent =
+        `${selectedSlot.start} – ${selectedSlot.end} CET`;
+      document.getElementById('successEmail').textContent = email;
+
+      goStep(3);
+
+    } catch (err) {
+      showError(err.message);
+      btn.disabled = false;
+      btn.innerHTML = `<span>${lang === 'it' ? 'Prenota la tua call' : 'Book your call'}</span><span>🎥</span>`;
+    }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('formError');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  // ─── ICS DOWNLOAD ─────────────────────────────────────────────────────────
+  function downloadICS() {
+    if (!bookingResult) return;
+    const a = document.createElement('a');
+    const blob = new Blob([bookingResult.icsContent], { type: 'text/calendar' });
+    a.href = URL.createObjectURL(blob);
+    a.download = 'supsi-call.ics';
+    a.click();
+  }
+
+  // ─── INIT ─────────────────────────────────────────────────────────────────
+  loadSlots();
+</script>
+
+</body>
+</html>
